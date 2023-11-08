@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Card from "./Card";
 
 interface ServersStatus {
   data?: {
@@ -44,6 +45,8 @@ interface MarketData {
 const Marketdata = () => {
   const [serverStatus, setServerStatus] = useState<ServersStatus>({});
   const [marketdata, setMarketdata] = useState<MarketData>({});
+  const [disabled, setDisabled] = useState<boolean>(false);
+  const [lastUpdate, setLastUpdate] = useState<string>("");
 
   const updateMarket = async () => {
     setServerStatus({});
@@ -64,6 +67,11 @@ const Marketdata = () => {
     } catch (error) {
       console.error(error);
     }
+    setDisabled(true);
+    setTimeout(() => {
+      setDisabled(false);
+    }, 10000);
+    setLastUpdate(new Date().toTimeString());
   };
 
   useEffect(() => {
@@ -71,26 +79,29 @@ const Marketdata = () => {
   }, []);
 
   return (
-    <section className="flex flex-col w-full max-w-4xl gap-4 p-2 shadow-lg bg-gray-100 border border-gray-200">
+    <section className="flex flex-col h-fit w-full sm:max-w-xs gap-4 p-2 shadow-lg bg-gray-100 border border-gray-200 rounded-md">
       <button
         onClick={updateMarket}
-        className="w-full p-2 bg-gray-100 border border-stone-600 hover:bg-gray-300 transition ease-in-out duration-300"
+        disabled={disabled}
+        className="w-full p-2 bg-stone-300 border border-stone-600 hover:bg-stone-600 hover:text-white transition ease-in-out duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Check Data
+        {disabled ? "Please wait a few seconds..." : "Update"}
       </button>
       {serverStatus?.status === 200 ? (
-        <p className="w-full text-center bg-green-600">
-          Status: {serverStatus?.status} - {serverStatus?.data?.gecko_says}
+        <p className="w-full text-center bg-green-600 rounded-md">
+          Status: {serverStatus?.status}
         </p>
       ) : (
-        <p className="w-full text-center bg-red-600">
+        <p className="w-full text-center bg-red-600 rounded-md">
           Status: {serverStatus?.status} - {serverStatus?.data?.error}
         </p>
       )}
       <section className="grid grid-cols-12 gap-4">
+        {/* VET - Marketdata */}
         <table className="table-auto col-span-12 border-separate border-spacing-1">
           <thead>
             <tr>
+              {/* VET - Name & 24h change - If +% => green else -% => red */}
               <td className="font-semibold">VET</td>
               {marketdata.data?.vechain?.usd_24h_change &&
                 marketdata.data?.vechain?.usd_24h_change > 0 && (
@@ -109,10 +120,12 @@ const Marketdata = () => {
             </tr>
           </thead>
           <tbody>
+            {/* VET - Price */}
             <tr>
-              <td>${marketdata.data?.vechain?.usd?.toFixed(4)}</td>
+              <td>${marketdata.data?.vechain?.usd?.toFixed(5)}</td>
             </tr>
             <tr>
+              {/* VET - Marketcap */}
               <td>
                 {marketdata.data?.vechain?.usd_market_cap &&
                   Intl.NumberFormat("en", {
@@ -124,9 +137,11 @@ const Marketdata = () => {
             </tr>
           </tbody>
         </table>
+        {/* VTHO - Marketdata */}
         <table className="table-auto col-span-12 border-separate border-spacing-1">
           <thead>
             <tr>
+              {/* VTHO - Name & 24h change - If +% => green else -% => red */}
               <td className="font-semibold ">VTHO</td>
               {marketdata.data?.["vethor-token"]?.usd_24h_change &&
                 marketdata.data?.["vethor-token"]?.usd_24h_change > 0 && (
@@ -152,9 +167,11 @@ const Marketdata = () => {
           </thead>
           <tbody>
             <tr>
-              <td>${marketdata.data?.["vethor-token"]?.usd?.toFixed(5)}</td>
+              {/* VTHO - Price */}
+              <td>${marketdata.data?.["vethor-token"]?.usd?.toFixed(6)}</td>
             </tr>
             <tr>
+              {/* VTHO - Marketcap */}
               <td>
                 {marketdata.data?.["vethor-token"]?.usd_market_cap &&
                   Intl.NumberFormat("en", {
@@ -167,6 +184,7 @@ const Marketdata = () => {
           </tbody>
         </table>
       </section>
+      <p className="w-full text-center text-sm">Last updated: {lastUpdate}</p>
     </section>
   );
 };
