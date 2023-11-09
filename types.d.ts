@@ -17,5 +17,4 @@ export interface Block {
   com?: boolean;
   isFinalized?: boolean;
   isTrunk: boolean;
-  clauses: number | null;
 }
