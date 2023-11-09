@@ -80,13 +80,6 @@ const Marketdata = () => {
 
   return (
     <section className="flex flex-col h-fit w-full sm:max-w-xs gap-4 p-2 shadow-lg bg-gray-100 border border-gray-200 rounded-md">
-      <button
-        onClick={updateMarket}
-        disabled={disabled}
-        className="w-full p-2 bg-stone-300 border border-stone-600 hover:bg-stone-600 hover:text-white transition ease-in-out duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {disabled ? "Please wait a few seconds..." : "Update"}
-      </button>
       {serverStatus?.status === 200 ? (
         <p className="w-full text-center bg-green-600 rounded-md">
           Status: {serverStatus?.status}
@@ -184,7 +177,15 @@ const Marketdata = () => {
           </tbody>
         </table>
       </section>
+
       <p className="w-full text-center text-sm">Last updated: {lastUpdate}</p>
+      <button
+        onClick={updateMarket}
+        disabled={disabled}
+        className="w-full p-2 bg-stone-300 border border-stone-600 hover:bg-stone-600 hover:text-white transition ease-in-out duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {disabled ? "Please wait a few seconds..." : "Update"}
+      </button>
     </section>
   );
 };
